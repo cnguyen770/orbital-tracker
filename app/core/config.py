@@ -6,6 +6,11 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     CELESTRAK_BASE_URL: str
     APP_ENV: str = "development"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     class Config:
         env_file = ".env"

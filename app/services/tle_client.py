@@ -6,14 +6,6 @@ logger = logging.getLogger(__name__)
 
 
 def parse_tle_file(raw_text: str) -> list[dict]:
-    """
-    Parse raw TLE file text into a list of satellite dicts.
-
-    A TLE file is a plain text file where every 3 lines represent one satellite:
-    Line 0: satellite name
-    Line 1: first data line (starts with "1")
-    Line 2: second data line (starts with "2")
-    """
     satellites = []
     lines = [line.strip() for line in raw_text.strip().splitlines() if line.strip()]
 
@@ -37,14 +29,6 @@ def parse_tle_file(raw_text: str) -> list[dict]:
 
 
 async def fetch_tle_group(group: str = "stations") -> list[dict]:
-    """
-    Fetch a TLE group from Celestrak and return parsed satellites.
-
-    Common groups:
-    - "stations"  — ISS and other space stations
-    - "visual"    — brightest/most visible satellites
-    - "starlink"  — all Starlink satellites
-    """
     url = f"{settings.CELESTRAK_BASE_URL}?GROUP={group}&FORMAT=tle"
 
     async with httpx.AsyncClient() as client:

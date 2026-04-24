@@ -14,5 +14,6 @@ class Satellite(Base):
     name = Column(String, nullable=False)
     line1 = Column(String, nullable=False)
     line2 = Column(String, nullable=False)
+    group = Column(String, nullable=False, default="stations")
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
