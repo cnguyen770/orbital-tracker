@@ -37,7 +37,8 @@ from app.services.orbital import (
     get_positions_batch,
     haversine_km,
 )
-
+import asyncio
+from datetime import datetime, timezone
 router = APIRouter()
 
 AVAILABLE_GROUPS = [
@@ -104,6 +105,15 @@ async def get_positions(
     limit: int = 500,
     db: AsyncSession = Depends(get_db)
 ):
+    from app.core.cache import cache_get, cache_set
+
+    bucket = int(now.timestamp() // 10) if (now := datetime.now(timezone.utc)) else 0
+    cache_key = f"positions:{group or 'all'}:{limit}:{bucket}"
+
+    cached = await cache_get(cache_key)
+    if cached:
+        return cached
+
     satellites = await get_all_satellites(db, group)
     satellites = satellites[:limit]
 
@@ -117,17 +127,18 @@ async def get_positions(
         for s in satellites
     ]
 
-    import asyncio
-    from datetime import datetime, timezone
-    now = datetime.now(timezone.utc)
     positions = await asyncio.to_thread(get_positions_batch, sat_dicts, now)
 
-    return {
+    response = {
         "timestamp": now.isoformat(),
         "count": len(positions),
         "group": group,
         "positions": positions,
     }
+
+    await cache_set(cache_key, response, ttl_seconds=10)
+
+    return response
 @router.get("/conjunctions", response_model=ConjunctionResponse)
 async def get_conjunctions(
     group: str = "stations",

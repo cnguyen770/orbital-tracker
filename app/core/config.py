@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     CELESTRAK_BASE_URL: str
     APP_ENV: str = "development"
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    REDIS_URL: str = "redis://localhost:6379/0"
 
     @property
     def allowed_origins_list(self) -> list[str]:
