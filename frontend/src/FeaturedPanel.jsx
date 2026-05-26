@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 
-const API = "http://127.0.0.1:8000/api"
-
+const API = "/api"
 export default function FeaturedPanel({ onSelect }) {
   const [featured, setFeatured] = useState([])
   const [collapsed, setCollapsed] = useState(false)

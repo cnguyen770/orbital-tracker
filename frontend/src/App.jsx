@@ -5,8 +5,7 @@ import FeaturedPanel from "./FeaturedPanel"
 import { NearMeButton, OverheadList } from "./NearMePanel"
 Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NGJhZDczOC0zYTc5LTRjZDktYjNkYi01MmUxMzQwN2Y1NGYiLCJpZCI6NDIxNzAyLCJpYXQiOjE3NzY4NDMyMzh9.OaICnFcsNYdu4DnFB4qm7yRjQusGmvoIstYPeVK568Y"
 
-const API = "http://127.0.0.1:8000/api"
-
+const API = "/api"
 const GROUPS = ["stations", "weather", "starlink"]
 
 const GROUP_COLORS = {
