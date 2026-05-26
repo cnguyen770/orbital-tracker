@@ -122,8 +122,6 @@ Visit `http://localhost:5173`
 
 **Separate database from application server.** PostgreSQL runs as a container on the same EC2 instance as the backend. In production this would move to RDS, a managed service with automated backups and failover.
 
-**Automated deployment.** The CI pipeline runs tests on every push but doesn't deploy. Adding a CD step to GitHub Actions would complete the automation.
-
 ---
 
 ## Background
