@@ -1,0 +1,2 @@
+NAME                      CLASS   HOSTS   ADDRESS        PORTS   AGE
+orbital-tracker-ingress   nginx   *       192.168.49.2   80      10m

@@ -1,0 +1,26 @@
+NAME          REFERENCE                            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+backend-hpa   Deployment/orbital-tracker-backend   cpu: 1%/70%   2         10        2          10m
+Name:                                                  backend-hpa
+Namespace:                                             orbital-tracker
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Wed, 10 Jun 2026 14:47:53 -0700
+Reference:                                             Deployment/orbital-tracker-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  1% (3m) / 70%
+Min replicas:                                          2
+Max replicas:                                          10
+Deployment pods:                                       2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                    From                       Message
+  ----     ------                        ----                   ----                       -------
+  Warning  FailedGetResourceMetric       9m59s (x2 over 10m)    horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  9m59s (x2 over 10m)    horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       8m58s (x4 over 9m44s)  horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  8m58s (x4 over 9m44s)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)

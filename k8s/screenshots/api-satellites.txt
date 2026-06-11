@@ -1,0 +1,17 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 192.168.49.2:80...
+* Connected to 192.168.49.2 (192.168.49.2) port 80
+> GET /api/satellites HTTP/1.1
+> Host: 192.168.49.2
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 307 Temporary Redirect
+< Date: Wed, 10 Jun 2026 22:06:40 GMT
+< Content-Length: 0
+< Connection: keep-alive
+< location: http://192.168.49.2/api/satellites/
+< 
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+* Connection #0 to host 192.168.49.2 left intact

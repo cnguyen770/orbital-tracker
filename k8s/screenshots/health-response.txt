@@ -1,0 +1,19 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 192.168.49.2:80...
+* Connected to 192.168.49.2 (192.168.49.2) port 80
+> GET /health HTTP/1.1
+> Host: 192.168.49.2
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Date: Wed, 10 Jun 2026 21:58:33 GMT
+< Content-Type: application/json
+< Content-Length: 15
+< Connection: keep-alive
+< 
+{ [15 bytes data]
+100    15  100    15    0     0   5559      0 --:--:-- --:--:-- --:--:--  7500
+* Connection #0 to host 192.168.49.2 left intact
+{"status":"ok"}

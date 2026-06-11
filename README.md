@@ -116,6 +116,14 @@ Visit `http://localhost:5173`
 
 ---
 
+## Kubernetes
+
+The `/k8s` folder has complete manifests for deploying on Kubernetes — Deployments, Services, an NGINX ingress, and an HPA that scales the backend between 2 and 10 replicas based on CPU load. Production runs on EC2 rather than EKS because the EKS control plane costs ~$73/month regardless of workload, which doesn't make sense at this scale. The manifests are there for portability.
+
+Validated end-to-end on minikube. See [k8s/README.md](k8s/README.md) for setup instructions.
+
+---
+
 ## What I'd Do Differently
 
 **Client-side position propagation.** The current architecture polls the server every 30 seconds for positions. A smoother approach would send TLEs to the browser once and run SGP4 in JavaScript using `satellite.js`, computing positions every frame at 60fps. The tradeoff is more client-side CPU usage.

@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alembic-migrate
+  namespace: orbital-tracker
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: orbital-tracker
+        component: migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: orbital-tracker-backend:local
+          imagePullPolicy: Never
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: orbital-tracker-config

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orbital-tracker-config
+  namespace: orbital-tracker
+data:
+  DATABASE_URL: "postgresql+asyncpg://orbital_user:password123@postgres-service:5432/orbital_tracker"
+  REDIS_URL: "redis://redis-service:6379/0"
+  CELESTRAK_BASE_URL: "https://celestrak.org/NORAD/elements/gp.php"
+  APP_ENV: "kubernetes-local"
+  ALLOWED_ORIGINS: "http://localhost,http://localhost:5173,http://localhost:3000"

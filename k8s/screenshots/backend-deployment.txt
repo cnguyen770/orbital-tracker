@@ -1,0 +1,52 @@
+Name:                   orbital-tracker-backend
+Namespace:              orbital-tracker
+CreationTimestamp:      Wed, 10 Jun 2026 14:47:53 -0700
+Labels:                 app=orbital-tracker
+                        component=backend
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=orbital-tracker,component=backend
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=orbital-tracker
+           component=backend
+  Containers:
+   backend:
+    Image:      orbital-tracker-backend:local
+    Port:       8000/TCP
+    Host Port:  0/TCP
+    Command:
+      uvicorn
+      app.main:app
+      --host
+      0.0.0.0
+      --port
+      8000
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:8000/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8000/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      orbital-tracker-config  ConfigMap  Optional: false
+    Environment:              <none>
+    Mounts:                   <none>
+  Volumes:                    <none>
+  Node-Selectors:             <none>
+  Tolerations:                <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   orbital-tracker-backend-556b8c8bff (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  10m   deployment-controller  Scaled up replica set orbital-tracker-backend-556b8c8bff from 0 to 2
