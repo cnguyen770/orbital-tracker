@@ -3,3 +3,10 @@ venv/
 __pycache__/
 *.pyc
 .idea/
+.idea/
+
+
+# Terraform
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
