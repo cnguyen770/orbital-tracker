@@ -93,29 +93,29 @@ class TestOrbitalPath:
 
 
 class TestBatchPositions:
-    def test_batch_computes_all_satellites(self):
+    async def test_batch_computes_all_satellites(self):
         sats = [
             {"norad_id": 25544, "name": "ISS", "line1": ISS_LINE1, "line2": ISS_LINE2},
         ]
-        results = get_positions_batch(sats, FIXED_TIME)
+        results = await get_positions_batch(sats, FIXED_TIME)
         assert len(results) == 1
         assert results[0]["norad_id"] == 25544
 
-    def test_batch_skips_bad_tles_instead_of_failing(self):
+    async def test_batch_skips_bad_tles_instead_of_failing(self):
         sats = [
             {"norad_id": 25544, "name": "ISS", "line1": ISS_LINE1, "line2": ISS_LINE2},
             {"norad_id": 99999, "name": "BAD", "line1": "1 garbage", "line2": "2 garbage"},
         ]
-        results = get_positions_batch(sats, FIXED_TIME)
+        results = await get_positions_batch(sats, FIXED_TIME)
         assert len(results) >= 0
         valid_ids = [r["norad_id"] for r in results]
         assert 25544 in valid_ids or 99999 not in valid_ids
 
-    def test_batch_shares_timestamp_across_results(self):
+    async def test_batch_shares_timestamp_across_results(self):
         from datetime import timedelta
         sats = [
             {"norad_id": 25544, "name": "ISS", "line1": ISS_LINE1, "line2": ISS_LINE2},
         ]
-        r1 = get_positions_batch(sats, FIXED_TIME)
-        r2 = get_positions_batch(sats, FIXED_TIME + timedelta(minutes=10))
+        r1 = await get_positions_batch(sats, FIXED_TIME)
+        r2 = await get_positions_batch(sats, FIXED_TIME + timedelta(minutes=10))
         assert r1[0]["longitude"] != r2[0]["longitude"]

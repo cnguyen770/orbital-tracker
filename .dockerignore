@@ -6,4 +6,3 @@ __pycache__/
 .env
 frontend/
 alembic/versions/__pycache__/
-tests/
