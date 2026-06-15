@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbital-tracker-position-service
+  namespace: orbital-tracker
+  labels:
+    app: orbital-tracker
+    component: position-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orbital-tracker
+      component: position-service
+  template:
+    metadata:
+      labels:
+        app: orbital-tracker
+        component: position-service
+    spec:
+      containers:
+        - name: position-service
+          image: orbital-tracker-position-service:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: position-service
+  namespace: orbital-tracker
+spec:
+  selector:
+    app: orbital-tracker
+    component: position-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: position-service-hpa
+  namespace: orbital-tracker
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: orbital-tracker-position-service
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

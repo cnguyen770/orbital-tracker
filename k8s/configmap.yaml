@@ -9,3 +9,4 @@ data:
   CELESTRAK_BASE_URL: "https://celestrak.org/NORAD/elements/gp.php"
   APP_ENV: "kubernetes-local"
   ALLOWED_ORIGINS: "http://localhost,http://localhost:5173,http://localhost:3000"
+  POSITION_SERVICE_URL: "http://position-service:8080"
