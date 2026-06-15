@@ -3,7 +3,7 @@ import { Viewer, Entity, PolylineGraphics } from "resium"
 import { Cartesian3, Color, Ion } from "cesium"
 import FeaturedPanel from "./FeaturedPanel"
 import { NearMeButton, OverheadList } from "./NearMePanel"
-Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NGJhZDczOC0zYTc5LTRjZDktYjNkYi01MmUxMzQwN2Y1NGYiLCJpZCI6NDIxNzAyLCJpYXQiOjE3NzY4NDMyMzh9.OaICnFcsNYdu4DnFB4qm7yRjQusGmvoIstYPeVK568Y"
+Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN ?? ""
 
 const API = "/api"
 const GROUPS = ["stations", "weather", "starlink"]

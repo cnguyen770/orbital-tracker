@@ -12,8 +12,8 @@ There are thousands of satellites constantly passing that we never see. This pro
 
 - Live position tracking for 10,000+ satellites across multiple groups (ISS complex, Starlink, weather satellites)
 - 90-minute orbital path projection for any satellite
-- Conjunction detection — identifies satellites whose orbital paths bring them dangerously close
-- "Near me" query — returns satellites currently within a geographic radius of your location
+- Conjunction detection identifies satellites whose orbital paths bring them dangerously close
+- "Near me" query returns satellites currently within a geographic radius of your location
 - Featured satellites panel with curated iconic objects (ISS, Hubble, GOES-16)
 - Position data auto-refreshes every 30 seconds; TLE data refreshes every 24 hours via a scheduled background job
 
@@ -29,14 +29,16 @@ AWS CloudFront (HTTPS)
    ├── /* ──────────────► AWS S3 (React frontend)
    └── /api/* ──────────► AWS EC2 (FastAPI backend)
                                │
-                         ┌─────┴─────┐
-                         ▼           ▼
-                    PostgreSQL     Redis
-                    (satellite     (position
-                     TLE data)      cache)
+                    ┌──────────┼──────────┐
+                    ▼          ▼          ▼
+               PostgreSQL    Redis    Position Service
+               (TLE data)   (cache)  (Java/Spring Boot
+                                      SGP4 compute)
 ```
 
 The frontend and backend share a single CloudFront distribution. Routing `/api/*` requests through CloudFront to EC2 eliminates mixed content issues without requiring a custom domain or managing SSL certificates separately.
+
+The SGP4 position computation runs in a standalone Java/Spring Boot microservice. The Python backend delegates batch position requests to it on cache miss, falling back to inline computation if the service is unavailable.
 
 ---
 
@@ -78,25 +80,39 @@ The algorithm is capped at 200 satellites per group to prevent O(n²) computatio
 | Layer | Technologies |
 |---|---|
 | **Backend** | Python, FastAPI, SQLAlchemy, Alembic, asyncpg, sgp4, APScheduler |
+| **Position Service** | Java 21, Spring Boot, Gradle, JUnit, MockMvc |
 | **Frontend** | React, CesiumJS, Resium, Vite |
-| **Infrastructure** | AWS EC2, AWS S3, AWS CloudFront, Docker, Docker Compose |
-| **Testing** | pytest, pytest-asyncio, Jest, React Testing Library (54 tests) |
+| **Infrastructure** | AWS EC2, AWS S3, AWS CloudFront, Docker, Docker Compose, Terraform, Kubernetes |
+| **Testing** | pytest, pytest-asyncio, Jest, React Testing Library (34 tests) |
 
 ---
 
 ## Running Locally
 
-**Prerequisites:** Docker, Docker Compose, a free [Cesium Ion token](https://cesium.com/ion/tokens)
+**Prerequisites:** Docker, Docker Compose, Java 21, a free [Cesium Ion token](https://cesium.com/ion/tokens)
+
+**1. Clone and configure:**
 
 ```bash
 git clone https://github.com/cnguyen770/orbital-tracker.git
 cd orbital-tracker
-cp .env.example .env
-# Edit .env with your Cesium Ion token
+```
+
+Create `frontend/.env.local` with your Cesium Ion token:
+
+```bash
+echo "VITE_CESIUM_TOKEN=your_token_here" > frontend/.env.local
+```
+
+**2. Start the backend services:**
+
+```bash
 docker compose up
 ```
 
-Once running, ingest satellite data:
+This starts PostgreSQL, Redis, the Java position service, and the Python backend. No additional configuration needed, all backend env vars are defined in `docker-compose.yml`.
+
+**3. Ingest satellite data:**
 
 ```bash
 curl -X POST "http://localhost:8000/api/satellites/ingest?group=stations"
@@ -104,7 +120,7 @@ curl -X POST "http://localhost:8000/api/satellites/ingest?group=weather"
 curl -X POST "http://localhost:8000/api/satellites/ingest?group=starlink"
 ```
 
-Frontend (in a separate terminal):
+**4. Start the frontend:**
 
 ```bash
 cd frontend
@@ -118,7 +134,7 @@ Visit `http://localhost:5173`
 
 ## Kubernetes
 
-The `/k8s` folder has complete manifests for deploying on Kubernetes — Deployments, Services, an NGINX ingress, and an HPA that scales the backend between 2 and 10 replicas based on CPU load. Production runs on EC2 rather than EKS because the EKS control plane costs ~$73/month regardless of workload, which doesn't make sense at this scale. The manifests are there for portability.
+The `/k8s` folder has complete manifests for deploying the full stack on Kubernetes. the Python backend, Java position service, Postgres, Redis, an NGINX ingress, and HPAs that scale both the backend and position service independently based on CPU load. Production runs on EC2 rather than EKS because the EKS control plane costs ~$73/month regardless of workload, which doesn't make sense at this scale. The manifests are there for portability.
 
 Validated end-to-end on minikube. See [k8s/README.md](k8s/README.md) for setup instructions.
 
