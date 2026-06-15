@@ -9,7 +9,6 @@ from app.services.satellite_service import (
     upsert_satellites,
 )
 from app.services.tle_client import fetch_tle_group
-from app.services.orbital import get_satellite_position, get_orbital_path
 from app.services.conjunction import find_conjunctions
 from app.models.responses import (
     PositionResponse,
@@ -37,7 +36,7 @@ from app.services.orbital import (
     get_positions_batch,
     haversine_km,
 )
-import asyncio
+from app.core.config import settings
 from datetime import datetime, timezone
 router = APIRouter()
 
@@ -127,7 +126,7 @@ async def get_positions(
         for s in satellites
     ]
 
-    positions = await asyncio.to_thread(get_positions_batch, sat_dicts, now)
+    positions = await get_positions_batch(sat_dicts, now, settings.POSITION_SERVICE_URL)
 
     response = {
         "timestamp": now.isoformat(),
@@ -139,6 +138,8 @@ async def get_positions(
     await cache_set(cache_key, response, ttl_seconds=10)
 
     return response
+
+
 @router.get("/conjunctions", response_model=ConjunctionResponse)
 async def get_conjunctions(
     group: str = "stations",
@@ -256,10 +257,8 @@ async def satellites_overhead(
         for s in satellites
     ]
 
-    import asyncio
-    from datetime import datetime, timezone
     now = datetime.now(timezone.utc)
-    positions = await asyncio.to_thread(get_positions_batch, sat_dicts, now)
+    positions = await get_positions_batch(sat_dicts, now, settings.POSITION_SERVICE_URL)
 
     group_lookup = {s["norad_id"]: s["group"] for s in sat_dicts}
 
@@ -287,6 +286,8 @@ async def satellites_overhead(
         "count": len(results),
         "satellites": results,
     }
+
+
 @router.get("/featured", response_model=FeaturedResponse)
 async def list_featured(db: AsyncSession = Depends(get_db)):
     results = []
@@ -302,6 +303,8 @@ async def list_featured(db: AsyncSession = Depends(get_db)):
         })
 
     return {"count": len(results), "satellites": results}
+
+
 @router.get("/{norad_id}", response_model=SatelliteDetail)
 async def get_satellite(norad_id: int, db: AsyncSession = Depends(get_db)):
     satellite = await get_satellite_by_norad(db, norad_id)

@@ -8,7 +8,7 @@ class PositionResponse(BaseModel):
     latitude: float
     longitude: float
     altitude_km: float
-    speed_km_s: float
+    speed_km_s: Optional[float] = None
 
 
 class SinglePositionResponse(PositionResponse):

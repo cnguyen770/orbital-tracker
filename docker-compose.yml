@@ -25,6 +25,16 @@ services:
       timeout: 3s
       retries: 5
 
+  position-service:
+    build: services/position-service
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: .
     ports:
@@ -35,10 +45,13 @@ services:
       APP_ENV: development
       ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
       REDIS_URL: redis://redis:6379/0
+      POSITION_SERVICE_URL: http://position-service:8080
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      position-service:
         condition: service_healthy
     command: >
       sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"

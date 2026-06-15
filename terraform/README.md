@@ -45,4 +45,4 @@ terraform plan
 terraform apply
 ```
 
-The existing live infrastructure was not imported into state — these files describe what would be created on a fresh deploy. Running `terraform apply` against a new AWS account would reproduce the full orbital tracker environment.
+The existing live infrastructure was not imported into state, these files describe what would be created on a fresh deploy. Running `terraform apply` against a new AWS account would reproduce the full orbital tracker environment.

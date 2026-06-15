@@ -273,7 +273,7 @@ const handleFeaturedSelect = async (noradId) => {
           <div>LAT: {selectedPos.latitude.toFixed(2)}°</div>
           <div>LON: {selectedPos.longitude.toFixed(2)}°</div>
           <div>ALT: {selectedPos.altitude_km.toFixed(1)} km</div>
-          <div>SPD: {selectedPos.speed_km_s.toFixed(3)} km/s</div>
+          <div>SPD: {selectedPos.speed_km_s != null ? selectedPos.speed_km_s.toFixed(3) : "—"} km/s</div>
 
           {selectedConjunctions.length > 0 && (
             <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #333" }}>

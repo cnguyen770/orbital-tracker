@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     REDIS_URL: str = "redis://localhost:6379/0"
+    POSITION_SERVICE_URL: str | None = None
 
     @property
     def allowed_origins_list(self) -> list[str]:
